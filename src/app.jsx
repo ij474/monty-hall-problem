@@ -4,7 +4,13 @@ import Door from './door';
 import { SimulationPanel } from './components/SimulationPanel';
 import { RotateCcw, Trophy, AlertTriangle } from 'lucide-react';
 
+/**
+ * Component: App
+ * This is the main container for the entire application.
+ * It brings together the Game Logic (useMontyHall), the Visuals (Door), and the Stats (SimulationPanel).
+ */
 export default function App() {
+  // Destructure all the variables and functions we need from our custom hook
   const {
     gameState,
     doors,
@@ -21,29 +27,39 @@ export default function App() {
     resetStats
   } = useMontyHall();
 
-  // Start game on load
+  // useEffect is a React hook that runs code when the component first loads.
+  // Here, we use it to start a fresh game immediately.
   useEffect(() => {
     startNewGame();
   }, [startNewGame]);
 
+  /**
+   * Helper: getDoorStatus
+   * Decides if a door should be visually 'open' or 'closed'.
+   * Doors open if the game is over, or if the host opened that specific door.
+   */
   const getDoorStatus = (doorId) => {
     if (gameState === 'RESULT') return 'open';
     if (doorId === hostOpenedDoor) return 'open';
     return 'closed';
   };
 
+  /**
+   * Helper: getDoorContent
+   * Decides what is behind the door: 'prize' (Money) or 'bust' (Empty/Goat).
+   */
   const getDoorContent = (doorId) => {
     return doorId === prizeDoor ? 'prize' : 'bust';
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500/30">
-      {/* Background Effects */}
+      {/* Background Effects: Creates the dark, moody atmosphere */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black pointer-events-none" />
       
       <div className="relative max-w-7xl mx-auto p-4 md:p-8 space-y-8">
         
-        {/* Header */}
+        {/* Header Section */}
         <header className="flex flex-col md:flex-row justify-between items-center pb-6 border-b border-slate-800">
           <div>
             <h1 className="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-600 uppercase drop-shadow-sm">
@@ -64,10 +80,10 @@ export default function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* LEFT: Main Stage (8 cols) */}
+          {/* LEFT COLUMN: The Main Stage (Doors & Game Area) */}
           <div className="lg:col-span-8 space-y-6">
             
-            {/* Game Status Bar */}
+            {/* Game Status Bar: Shows instructions like "Select a door..." */}
             <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-6 text-center shadow-2xl backdrop-blur-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
               <h2 className="text-2xl font-bold text-slate-100">
@@ -75,11 +91,12 @@ export default function App() {
               </h2>
             </div>
 
-            {/* The Stage (Doors) */}
+            {/* The Stage: Renders the 3 Door components */}
             <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-8 md:p-12 flex justify-center items-end gap-4 md:gap-12 min-h-[400px] relative">
               {/* Spotlight Effect */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent pointer-events-none" />
               
+              {/* Loop through the [0, 1, 2] array to create 3 doors */}
               {doors.map((doorId) => (
                 <Door
                   key={doorId}
@@ -87,6 +104,7 @@ export default function App() {
                   status={getDoorStatus(doorId)}
                   content={getDoorContent(doorId)}
                   isSelected={selectedDoor === doorId}
+                  // Disable clicking if it's not the picking phase or if the host opened this door
                   isDisabled={
                     (gameState !== 'PICK' && gameState !== 'REVEAL') || 
                     doorId === hostOpenedDoor
@@ -98,7 +116,7 @@ export default function App() {
               ))}
             </div>
 
-            {/* Impact Analysis Bar (Post-Game) */}
+            {/* Impact Analysis Bar: Shows "What If" feedback after the game ends */}
             {impactMessage && (
               <div className={`rounded-xl p-4 border-l-4 flex items-start gap-4 animate-in fade-in slide-in-from-bottom-4 ${
                 impactMessage.type === 'positive' 
@@ -115,12 +133,13 @@ export default function App() {
               </div>
             )}
 
-            {/* Controls */}
+            {/* Controls Area: Buttons for Stick/Switch or Play Again */}
             <div className="h-24 flex items-center justify-center">
+              {/* Phase 2: Stick or Switch Buttons */}
               {gameState === 'REVEAL' && (
                 <div className="flex gap-6 animate-in fade-in zoom-in duration-300">
                   <button
-                    onClick={() => finalizeChoice(false)} // Stay
+                    onClick={() => finalizeChoice(false)} // False = Stay
                     className="group relative px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-xl"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -129,7 +148,7 @@ export default function App() {
                   </button>
                   
                   <button
-                    onClick={() => finalizeChoice(true)} // Switch
+                    onClick={() => finalizeChoice(true)} // True = Switch
                     className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)]"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -139,6 +158,7 @@ export default function App() {
                 </div>
               )}
 
+              {/* Phase 3: Play Again Button */}
               {gameState === 'RESULT' && (
                 <button
                   onClick={startNewGame}
@@ -150,7 +170,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* RIGHT: Statistical Bay (4 cols) */}
+          {/* RIGHT COLUMN: Statistical Bay (Charts & Info) */}
           <div className="lg:col-span-4 space-y-6">
             <SimulationPanel 
               stats={stats} 
@@ -158,7 +178,7 @@ export default function App() {
               onReset={resetStats} 
             />
 
-            {/* Educational Card */}
+            {/* Educational Card: Explains the math simply */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-sm text-slate-400 leading-relaxed">
               <h4 className="text-slate-200 font-bold mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />

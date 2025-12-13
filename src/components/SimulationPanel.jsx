@@ -3,23 +3,38 @@ import { motion } from 'framer-motion';
 import { Zap, BarChart2, RefreshCw, PieChart as PieChartIcon } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Label } from 'recharts';
 
+/**
+ * Component: SimulationPanel
+ * This component displays the statistics (Wins/Losses) and the "Turbo Mode" button.
+ * It uses 'recharts' for the pie charts and 'framer-motion' for the animated bars.
+ */
 export const SimulationPanel = ({ stats, onRunSimulation, onReset }) => {
   const [isSimulating, setIsSimulating] = useState(false);
 
+  /**
+   * Function: handleRun
+   * Triggered when the user clicks "Run 1,000 Games".
+   * It adds a fake delay to make it feel like "work" is being done, then runs the math.
+   */
   const handleRun = () => {
     setIsSimulating(true);
     // Simulate a processing delay for effect
     setTimeout(() => {
-      onRunSimulation(1000);
+      onRunSimulation(1000); // Run 1000 games instantly
       setIsSimulating(false);
     }, 800);
   };
 
+  /**
+   * Helper: getPercentage
+   * Calculates the win percentage safely (avoids dividing by zero).
+   */
   const getPercentage = (wins, total) => {
     if (total === 0) return 0;
     return ((wins / total) * 100).toFixed(1);
   };
 
+  // Calculate current stats for display
   const stayWinRate = getPercentage(stats.stay.wins, stats.stay.wins + stats.stay.losses);
   const switchWinRate = getPercentage(stats.switch.wins, stats.switch.wins + stats.switch.losses);
   const totalStay = stats.stay.wins + stats.stay.losses;
@@ -41,7 +56,7 @@ export const SimulationPanel = ({ stats, onRunSimulation, onReset }) => {
         </button>
       </div>
 
-      {/* Controls */}
+      {/* Controls: The big button to run simulations */}
       <div className="mb-8">
         <button
           onClick={handleRun}
@@ -63,18 +78,19 @@ export const SimulationPanel = ({ stats, onRunSimulation, onReset }) => {
         </p>
       </div>
 
-      {/* Live Stats */}
+      {/* Live Stats: The progress bars showing win rates */}
       <div className="space-y-6">
-        {/* Always Stay */}
+        {/* Always Stay Strategy Stats */}
         <div>
           <div className="flex justify-between text-sm mb-2">
             <span className="font-bold text-amber-400">Always Stay</span>
             <span className="font-mono text-slate-300">{stayWinRate}%</span>
           </div>
           <div className="relative h-6 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-            {/* Target Line */}
+            {/* Target Line: Shows where 33.3% is (the expected math) */}
             <div className="absolute top-0 bottom-0 w-0.5 bg-white/20 left-[33.3%] z-10" title="Expected: 33.3%"></div>
             
+            {/* Animated Bar: Grows to match the win rate */}
             <motion.div 
               className="h-full bg-amber-500"
               initial={{ width: 0 }}
@@ -88,14 +104,14 @@ export const SimulationPanel = ({ stats, onRunSimulation, onReset }) => {
           </div>
         </div>
 
-        {/* Always Switch */}
+        {/* Always Switch Strategy Stats */}
         <div>
           <div className="flex justify-between text-sm mb-2">
             <span className="font-bold text-cyan-400">Always Switch</span>
             <span className="font-mono text-slate-300">{switchWinRate}%</span>
           </div>
           <div className="relative h-6 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-            {/* Target Line */}
+            {/* Target Line: Shows where 66.7% is (the expected math) */}
             <div className="absolute top-0 bottom-0 w-0.5 bg-white/20 left-[66.6%] z-10" title="Expected: 66.7%"></div>
             
             <motion.div 
@@ -113,13 +129,14 @@ export const SimulationPanel = ({ stats, onRunSimulation, onReset }) => {
       </div>
 
       {/* Visual Breakdown (Pie Charts) */}
+      {/* Only show this section if we have played at least one game */}
       {stats.total > 0 && (
         <div className="mt-8 pt-6 border-t border-slate-800">
           <h4 className="text-sm font-bold text-slate-400 mb-4 flex items-center gap-2">
             <PieChartIcon size={16} /> Visual Breakdown
           </h4>
           <div className="grid grid-cols-2 gap-4">
-            {/* Stay Chart */}
+            {/* Stay Chart: Donut chart for Stay wins/losses */}
             <div className="flex flex-col items-center">
               <span className="text-xs font-bold text-amber-500 mb-2">Stay Outcomes</span>
               <div className="h-32 w-full">
@@ -155,7 +172,7 @@ export const SimulationPanel = ({ stats, onRunSimulation, onReset }) => {
               </div>
             </div>
 
-            {/* Switch Chart */}
+            {/* Switch Chart: Donut chart for Switch wins/losses */}
             <div className="flex flex-col items-center">
               <span className="text-xs font-bold text-cyan-400 mb-2">Switch Outcomes</span>
               <div className="h-32 w-full">

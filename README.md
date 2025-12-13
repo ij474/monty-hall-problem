@@ -141,3 +141,24 @@ games.forEach(game => {
 3.  Add your generic asset images to `/public/assets` (ensure no emojis are used).
 4.  `npm start` to run the visualizer.
 5.  Click **"Turbo Mode"** to see the Live Statistics populate and compare against the theory.
+
+-----
+
+## 7. Deployment
+
+The easiest way to deploy this React + Vite app is using **Vercel** or **Netlify**.
+
+### Option 1: Vercel (Recommended)
+1.  Push your code to a GitHub repository.
+2.  Go to [Vercel.com](https://vercel.com) and sign up/login.
+3.  Click **"Add New..."** -> **"Project"**.
+4.  Import your GitHub repository.
+5.  Vercel will automatically detect `Vite`. Click **Deploy**.
+
+### Option 2: Netlify
+1.  Push your code to GitHub.
+2.  Go to [Netlify.com](https://netlify.com).
+3.  Click **"Add new site"** -> **"Import from existing project"**.
+4.  Connect GitHub and select your repo.
+5.  Ensure the build command is `npm run build` and publish directory is `dist`.
+6.  Click **Deploy**.

@@ -1,5 +1,11 @@
 import React from 'react';
 
+/**
+ * Component: EmptyVault
+ * A purely presentational SVG component.
+ * Displays an empty, dark vault to represent the "Bust" (Goat/Zonk).
+ * Uses dark colors and "cobweb" lines to imply emptiness.
+ */
 export const EmptyVault = () => (
   <svg viewBox="0 0 200 200" className="w-full h-full opacity-80">
     <defs>

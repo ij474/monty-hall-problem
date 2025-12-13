@@ -1,5 +1,11 @@
 import React from 'react';
 
+/**
+ * Component: CashStack
+ * A purely presentational SVG component.
+ * Displays a stack of gold bars/cash to represent the "Prize".
+ * Uses SVG gradients and filters for a shiny effect.
+ */
 export const CashStack = () => (
   <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-lg">
     <defs>
