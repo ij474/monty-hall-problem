@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useMontyHall } from './usemontyhall';
 import Door from './door';
+import { SimulationPanel } from './components/SimulationPanel';
 import { RotateCcw, Trophy, AlertTriangle } from 'lucide-react';
 
 /**
@@ -18,9 +19,12 @@ export default function App() {
     hostOpenedDoor,
     message,
     impactMessage,
+    stats,
     startNewGame,
     pickDoor,
-    finalizeChoice
+    finalizeChoice,
+    runSimulation,
+    resetStats
   } = useMontyHall();
 
   // useEffect is a React hook that runs code when the component first loads.
@@ -168,7 +172,12 @@ export default function App() {
 
           {/* RIGHT COLUMN: Statistical Bay (Charts & Info) */}
           <div className="lg:col-span-4 space-y-6">
-            
+            <SimulationPanel 
+              stats={stats} 
+              onRunSimulation={runSimulation} 
+              onReset={resetStats} 
+            />
+
             {/* Educational Card: Explains the math simply */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-sm text-slate-400 leading-relaxed">
               <h4 className="text-slate-200 font-bold mb-2 flex items-center gap-2">
